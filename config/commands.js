@@ -224,7 +224,8 @@ module.exports = {
   ping: {
     multiKey: false,
     interval: 0,
-    readOnly: true
+    readOnly: true,
+    noKey: true
   },
   bitpos: {
     multiKey: false,
@@ -728,7 +729,8 @@ module.exports = {
   info: {
     multiKey: false,
     interval: 0,
-    readOnly: true
+    readOnly: true,
+    noKey: true
   },
   rpoplpush: {
     multiKey: false,

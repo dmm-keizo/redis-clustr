@@ -358,10 +358,16 @@ RedisClustr.prototype.doCommand = function(cmd, conf, args) {
 
   self.parseArgs(args, function(_, args, cb) {
     var key = args[0];
+    var r;
 
-    if (!key) return cb(new Error('no key for command: ' + cmd));
+    if (conf.noKey) {
+      r = self.getRandomConnection();
 
-    var r = self.selectClient(key, conf);
+    } else {
+      if (!key) return cb(new Error('no key for command: ' + cmd));
+      r = self.selectClient(key, conf);
+    }
+
     if (!r) return cb(new Error('couldn\'t get client'));
     if (!r[cmd]) return cb(new Error('NodeRedis doesn\'t know the ' + cmd + ' command'));
     self.commandCallback(r, cmd, args, cb);
@@ -614,9 +620,9 @@ setupCommands(RedisClustr);
  * @date   2014-11-19
  * @return {RedisBatch}   A RedisBatch which has a very similar interface                                                 to redis/
  */
-RedisClustr.prototype.batch = RedisClustr.prototype.multi = function() {
+RedisClustr.prototype.batch = RedisClustr.prototype.multi = function(commands) {
   var self = this;
-  return new RedisBatch(self);
+  return new RedisBatch(self, commands);
 };
 
 /**

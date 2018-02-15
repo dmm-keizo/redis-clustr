@@ -6,10 +6,17 @@ Like a multi but without using the MULTI command itself, so it's useful
 for batching commands into a single callback
 */
 
-var RedisBatch = module.exports = function(cluster) {
+var RedisBatch = module.exports = function(cluster, commands) {
   var self = this;
   self.cluster = cluster;
   self.queue = [];
+
+  if (commands) {
+    var command_options = require('../config/commands');
+    for (var i = 0; i < commands.length; i++) {
+      self.queue.push([ commands[i][0], command_options[commands[i][0]], commands[i].slice(1) ]);
+    }
+  }
 };
 
 RedisBatch.prototype.doCommand = function(cmd, conf, args) {
